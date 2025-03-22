@@ -1,0 +1,3 @@
+I:/#PROJECT/RUNNING/24point/CLION/cmake-build-debug/CMakeFiles/CLION.dir
+I:/#PROJECT/RUNNING/24point/CLION/cmake-build-debug/CMakeFiles/edit_cache.dir
+I:/#PROJECT/RUNNING/24point/CLION/cmake-build-debug/CMakeFiles/rebuild_cache.dir
