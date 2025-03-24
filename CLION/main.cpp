@@ -264,7 +264,7 @@ public:
     }
 };
 
-class ALL_STEP {
+class ALL_STEP {//全局情况记录
     public:
     std::vector<ONE_STEP> step_map;
     int current_step=0;
@@ -278,7 +278,7 @@ class ALL_STEP {
 };
 static ALL_STEP GLOBAL_ALL_STEP; // 全局变量
 
-class RESULT_STEP : public ALL_STEP {
+class RESULT_STEP : public ALL_STEP {// 对结果的记录
 public:
     bool is_24point = false;
     RESULT_STEP(Poke &poke,const ALL_STEP &G=::GLOBAL_ALL_STEP) {// 默认构造函数
@@ -289,7 +289,7 @@ public:
         this->step_map.resize(current_step+1);
     }
 };
-class STEP_RECORD: public ALL_STEP {
+class STEP_RECORD: public ALL_STEP {// 对每一步的记录::GLOBAL_ALL_STEP
 public:
     STEP_RECORD(const ALL_STEP &G=::GLOBAL_ALL_STEP) {// 默认构造函数
         this->current_step = G.current_step;
@@ -298,7 +298,7 @@ public:
     }
 };
 // 数据库
-class DATABASE_node {
+class DATABASE_node {//数据库索引节点
 public:
     int cnt;// 节点编号，索引从0开始
     int type;// 0代表组合节点，1代表步骤节点，2代表结果节点
@@ -309,13 +309,13 @@ public:
         this->goal_cnt = goal_cnt;
     }
 };// 数据库节点
-class DATABASE {
+class DATABASE {//数据库
 public:
     int current_cnt=0;
-    std::vector<DATABASE_node> database_node_map;
-    std::vector<STEP_RECORD> step_map;
-    std::vector<ONE_STEP_COBINATION> one_step_combination;
-    std::vector<RESULT_STEP> result_map;
+    std::vector<DATABASE_node> database_node_map;//存储的是线性时间表向一下各个数据库缩影的映射
+    std::vector<STEP_RECORD> step_map;//存储的是每一步递归的全局::GLOBAL_ALL_STEP情况
+    std::vector<ONE_STEP_COBINATION> one_step_combination;//每当需要组合算法时，记录每一个组合情况的实际调用情况
+    std::vector<RESULT_STEP> result_map;//每当出现结果时，存储全局::GLOBAL_ALL_STEP和是否为24点
     DATABASE() {// 默认构造函数
         database_node_map.reserve(2000);
         step_map.reserve(1000);
@@ -342,7 +342,7 @@ public:
 };
 
 static DATABASE database; // 数据库实例
-std::mutex database_mutex;
+std::mutex database_mutex;// 数据库互斥锁
 
 class DATABASE_MANAGER {
 public:
@@ -400,7 +400,6 @@ void DFS(int step,Poke &poke) {
     }
 }
 int main() {
-    std::queue<Pair> Q;
     Card a(STATE::ORIGIN,8);
     Card b(STATE::ORIGIN,3);
     Card c(STATE::ORIGIN,2);
