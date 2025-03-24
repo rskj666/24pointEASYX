@@ -407,9 +407,5 @@ int main() {
     Card d(STATE::ORIGIN,1);
     Poke poke(a, b, c, d);
     DFS(1, poke);
-    /*
-    for (int i=0;i<=::database.database_node_map.size();i++) {
-        if (database.database_node_map[i].type==2 && database.result_map[database.database_node_map[i].goal_cnt].is_24point) std::cout << database.database_node_map[i].cnt << std::endl;
-    }*/
     return 0;
 }
