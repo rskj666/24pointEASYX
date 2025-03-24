@@ -371,8 +371,8 @@ public:
 // 24点游戏的深度优先搜索
 void DFS(int step,Poke &poke) {
     if (poke.CARD_COUNT <= 1) {
-        if (poke.LAST_24()) std::cout<<"24!!"<<std::endl;
-        else std::cout<<"No 24!!"<<std::endl;
+        RESULT_STEP step_result(poke);
+        DATABASE_MANAGER::add_RESULT(step_result);
         cnt++;
         return;
     }
@@ -388,9 +388,13 @@ void DFS(int step,Poke &poke) {
             if (result.num != DIVE_ERROR_CARD.num) {
                 Poke newpoke(temp, poke.FIRST_CARD, poke.SECOND_CARD, poke.THIRD_CARD, poke.FOURTH_CARD, result);
                 ONE_STEP stepinfo(step, poke, i, temp,result);
+                ::GLOBAL_ALL_STEP.ALL_STEP_flash(stepinfo);
+                DATABASE_MANAGER::add_ONESTEP(stepinfo);
                 DFS(step+1, newpoke);
             } else {
                 ONE_STEP stepinfo(step, poke, i, temp,STATE::ERROR);
+                ::GLOBAL_ALL_STEP.ALL_STEP_flash(stepinfo);
+                DATABASE_MANAGER::add_ONESTEP(stepinfo);
             }
         }
     }
@@ -403,6 +407,9 @@ int main() {
     Card d(STATE::ORIGIN,1);
     Poke poke(a, b, c, d);
     DFS(1, poke);
-    std::cout << "Total: " << cnt << std::endl;
+    /*
+    for (int i=0;i<=::database.database_node_map.size();i++) {
+        if (database.database_node_map[i].type==2 && database.result_map[database.database_node_map[i].goal_cnt].is_24point) std::cout << database.database_node_map[i].cnt << std::endl;
+    }*/
     return 0;
 }
