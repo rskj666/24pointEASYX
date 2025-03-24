@@ -8,7 +8,6 @@
 //全局参数
 const char funct[4]={'+' ,'-','*','/'};// 定义四种运算符
 
-int cnt=0;//(删除)记录结果数量
 
 enum STATE {ORIGIN,EXTRA,ERROR,EMPTY}; // 定义卡牌状态
 
@@ -108,7 +107,7 @@ Card (Pair::*funcptr[4])() = {&Pair::PAIR_ADD,&Pair::PAIR_SUB,&Pair::PAIR_MUL,&P
 
 const Pair EMPTY_Pair(EMPTY_Card, EMPTY_Card); // 使用默认构造函数的空牌来构造空对
 
-class one_combination {
+class one_combination {// 单次组合节点
 public:
     int First_postion;
     int Second_postion;
@@ -123,7 +122,7 @@ public:
         this->result = result;
     }
 };
-class ONE_STEP_COBINATION {
+class ONE_STEP_COBINATION {//一次完整的组合由多个单次组合节点组成
 public:
     std::vector<one_combination> one_combination_stack;
     int FIRST_CARD;
@@ -314,7 +313,7 @@ class DATABASE {
 public:
     int current_cnt=0;
     std::vector<DATABASE_node> database_node_map;
-    std::vector<ONE_STEP> step_map;
+    std::vector<STEP_RECORD> step_map;
     std::vector<ONE_STEP_COBINATION> one_step_combination;
     std::vector<RESULT_STEP> result_map;
     DATABASE() {// 默认构造函数
@@ -322,8 +321,8 @@ public:
         step_map.reserve(1000);
         one_step_combination.reserve(1000);
     }
-    void add_ONESTEP(const ONE_STEP &one_step) {// 添加步骤节点
-        step_map.push_back(one_step);
+    void add_ONESTEP(const STEP_RECORD &step_record) {// 添加步骤节点
+        step_map.push_back(step_record);
         current_cnt++;
         DATABASE_node node(current_cnt-1,1,step_map.size()-1);
         database_node_map.push_back(node);
@@ -351,9 +350,9 @@ public:
     ~DATABASE_MANAGER() = default;
     DATABASE_MANAGER operator=(const DATABASE_MANAGER &a) = delete; // 禁止拷贝构造函数
     DATABASE_MANAGER(const DATABASE &a) = delete; // 禁止拷贝构造函数
-    static void add_ONESTEP(const ONE_STEP &one_step) {// 添加步骤节点
+    static void add_ONESTEP(const STEP_RECORD &step_record) {// 添加步骤节点
         std::unique_lock<std::mutex> lock(database_mutex); // 加锁
-        ::database.add_ONESTEP(one_step);
+        ::database.add_ONESTEP(step_record);
         lock.unlock(); // 解锁
     }
     static void add_COMBINATION(const ONE_STEP_COBINATION &one_combination) {// 添加组合节点
@@ -373,7 +372,6 @@ void DFS(int step,Poke &poke) {
     if (poke.CARD_COUNT <= 1) {
         RESULT_STEP step_result(poke);
         DATABASE_MANAGER::add_RESULT(step_result);
-        cnt++;
         return;
     }
     std::queue<Pair> Q;
@@ -389,12 +387,14 @@ void DFS(int step,Poke &poke) {
                 Poke newpoke(temp, poke.FIRST_CARD, poke.SECOND_CARD, poke.THIRD_CARD, poke.FOURTH_CARD, result);
                 ONE_STEP stepinfo(step, poke, i, temp,result);
                 ::GLOBAL_ALL_STEP.ALL_STEP_flash(stepinfo);
-                DATABASE_MANAGER::add_ONESTEP(stepinfo);
+                STEP_RECORD stepin_record;
+                DATABASE_MANAGER::add_ONESTEP(stepin_record);
                 DFS(step+1, newpoke);
             } else {
                 ONE_STEP stepinfo(step, poke, i, temp,STATE::ERROR);
                 ::GLOBAL_ALL_STEP.ALL_STEP_flash(stepinfo);
-                DATABASE_MANAGER::add_ONESTEP(stepinfo);
+                STEP_RECORD stepin_record;
+                DATABASE_MANAGER::add_ONESTEP(stepin_record);
             }
         }
     }
