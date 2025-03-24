@@ -1,0 +1,3 @@
+I:/#PROJECT/RUNNING/24point/ARITHMETIC/cmake-build-debug/CMakeFiles/ARITHMETIC.dir
+I:/#PROJECT/RUNNING/24point/ARITHMETIC/cmake-build-debug/CMakeFiles/edit_cache.dir
+I:/#PROJECT/RUNNING/24point/ARITHMETIC/cmake-build-debug/CMakeFiles/rebuild_cache.dir

@@ -18,57 +18,57 @@ enum combination_state{
     NORMAL = 0
 }; // 定义组合状态
 // 对象属性方法
-class Card {// 单张扑克牌
+class CARD {// 单张扑克牌
 public:
     int num = 0;
     int position = 0; // 扑克牌在此层中的位置，0代表未定序
     enum STATE state = ORIGIN; // 扑克牌状态
 
-    Card(const Card &a) {// 拷贝构造函数
+    CARD(const CARD &a) {// 拷贝构造函数
         this->num = a.num;
         this->position = a.position;
         this->state = a.state;
     }
 
-    Card& operator=(const Card &a) {    // 赋值运算符重载
+    CARD& operator=(const CARD &a) {    // 赋值运算符重载
         this->num = a.num;
         this->position = a.position;
         this->state = a.state;
         return *this; // 返回对 *this 的引用
     }
 
-    Card(int num = 0) { // 添加卡牌构造函数
+    CARD(int num = 0) { // 添加卡牌构造函数
         this->state = EXTRA; // 默认构造函数
         this->num = num;
         this->position = 0;
         if (this->num == 0) this->state = EMPTY; // 如果num为0，则状态为EMPTY
     }
 
-    Card(enum STATE state,int num=0) {// 异常卡牌构造函数
+    CARD(enum STATE state,int num=0) {// 异常卡牌构造函数
         this->state = state;
         this->num = num;
         this->position = 0;
     }
 
-    bool operator<(const Card &a) const {// 重载小于运算符
+    bool operator<(const CARD &a) const {// 重载小于运算符
         return this->num < a.num;
     }
 };
-bool COMPARE_DOWN_CARD(const Card &a, const Card &b) {// 重载Card大于运算符
+bool COMPARE_DOWN_CARD(const CARD &a, const CARD &b) {// 重载Card大于运算符
     return a.num > b.num;
 }
 
 
-const static Card EMPTY_Card(STATE::EMPTY,0); // 使用异常卡牌构造函数定义空牌
-const static Card DIVE_ERROR_CARD(STATE::ERROR,-1); // 使用异常卡牌构造函数定义除法错误牌
+const static CARD EMPTY_Card(STATE::EMPTY,0); // 使用异常卡牌构造函数定义空牌
+const static CARD DIVE_ERROR_CARD(STATE::ERROR,-1); // 使用异常卡牌构造函数定义除法错误牌
 
 
-class Pair {    // 一对扑克牌
+class PAIR {    // 一对扑克牌
 public:
-    Card FIRST_CARD;
-    Card SECOND_CARD;
+    CARD FIRST_CARD;
+    CARD SECOND_CARD;
 
-    Pair(const Card &a, const Card &b) {// 构造函数
+    PAIR(const CARD &a, const CARD &b) {// 构造函数
         if (a.num > b.num) {
             FIRST_CARD = a;
             SECOND_CARD = b;
@@ -78,7 +78,7 @@ public:
         }
     }
 
-    bool operator==(const Pair &a) const {// 重载==运算符
+    bool operator==(const PAIR &a) const {// 重载==运算符
         return (this->FIRST_CARD.num == a.FIRST_CARD.num && this->SECOND_CARD.num == a.SECOND_CARD.num) ||
                (this->FIRST_CARD.num == a.SECOND_CARD.num && this->SECOND_CARD.num == a.FIRST_CARD.num);
     }
@@ -86,26 +86,26 @@ public:
     bool isempty() const {// 判断是否为空对
         return (this->FIRST_CARD.num == 0 && this->SECOND_CARD.num == 0);
     }
-    Card PAIR_ADD() {// 一对扑克牌的加法
-        return Card(FIRST_CARD.num + SECOND_CARD.num);
+    CARD PAIR_ADD() {// 一对扑克牌的加法
+        return CARD(FIRST_CARD.num + SECOND_CARD.num);
     }
-    Card PAIR_SUB() { // 一对扑克牌的减法
+    CARD PAIR_SUB() { // 一对扑克牌的减法
         int temp = FIRST_CARD.num - SECOND_CARD.num;
-        Card result(temp);
+        CARD result(temp);
         return result;
     }
-    Card PAIR_MUL() {// 一对扑克牌的乘法
-        return Card(FIRST_CARD.num * SECOND_CARD.num);
+    CARD PAIR_MUL() {// 一对扑克牌的乘法
+        return CARD(FIRST_CARD.num * SECOND_CARD.num);
     }
-    Card PAIR_DIV() {// 一对扑克牌的除法,如果除法有余数或者被除数为0，则返回除法错误牌
+    CARD PAIR_DIV() {// 一对扑克牌的除法,如果除法有余数或者被除数为0，则返回除法错误牌
         if (SECOND_CARD.num == 0||FIRST_CARD.num % SECOND_CARD.num != 0) return DIVE_ERROR_CARD; // 避免除以零
-        return Card(FIRST_CARD.num / SECOND_CARD.num);
+        return CARD(FIRST_CARD.num / SECOND_CARD.num);
     }
 };
 
-Card (Pair::*funcptr[4])() = {&Pair::PAIR_ADD,&Pair::PAIR_SUB,&Pair::PAIR_MUL,&Pair::PAIR_DIV}; // 定义函数指针数组指向四种运算
+CARD (PAIR::*funcptr[4])() = {&PAIR::PAIR_ADD,&PAIR::PAIR_SUB,&PAIR::PAIR_MUL,&PAIR::PAIR_DIV}; // 定义函数指针数组指向四种运算
 
-const Pair EMPTY_Pair(EMPTY_Card, EMPTY_Card); // 使用默认构造函数的空牌来构造空对
+const PAIR EMPTY_Pair(EMPTY_Card, EMPTY_Card); // 使用默认构造函数的空牌来构造空对
 
 class one_combination {// 单次组合节点
 public:
@@ -141,16 +141,16 @@ public:
 
 };// 记录组合
 
-class Poke {//一组扑克牌
+class POKE {//一组扑克牌
 public:
-    Card FIRST_CARD;
-    Card SECOND_CARD;
-    Card THIRD_CARD;
-    Card FOURTH_CARD;
-    Card* CARDS[4] = {&FIRST_CARD, &SECOND_CARD, &THIRD_CARD, &FOURTH_CARD};
+    CARD FIRST_CARD;
+    CARD SECOND_CARD;
+    CARD THIRD_CARD;
+    CARD FOURTH_CARD;
+    CARD* CARDS[4] = {&FIRST_CARD, &SECOND_CARD, &THIRD_CARD, &FOURTH_CARD};
     int CARD_COUNT = 0;
 
-    Poke(const Card &a = EMPTY_Card, const Card &b = EMPTY_Card, const Card &c = EMPTY_Card, const Card &d = EMPTY_Card)// 对于初始化的构造函数
+    POKE(const CARD &a = EMPTY_Card, const CARD &b = EMPTY_Card, const CARD &c = EMPTY_Card, const CARD &d = EMPTY_Card)// 对于初始化的构造函数
         : FIRST_CARD(a), SECOND_CARD(b), THIRD_CARD(c), FOURTH_CARD(d) { // 使用初始化列表
         SORT_CARDS();
         FIRST_CARD.position = 1;
@@ -158,7 +158,7 @@ public:
         THIRD_CARD.position = 3;
         FOURTH_CARD.position = 4;
     }
-    Poke(Pair pair = EMPTY_Pair,const Card &a = EMPTY_Card, const Card &b = EMPTY_Card, const Card &c = EMPTY_Card, const Card &d = EMPTY_Card,const Card &addcard = EMPTY_Card){// 对于递归构造函数
+    POKE(PAIR pair = EMPTY_Pair,const CARD &a = EMPTY_Card, const CARD &b = EMPTY_Card, const CARD &c = EMPTY_Card, const CARD &d = EMPTY_Card,const CARD &addcard = EMPTY_Card){// 对于递归构造函数
         FIRST_CARD = a;
         SECOND_CARD = b;
         THIRD_CARD = c;
@@ -173,10 +173,11 @@ public:
         THIRD_CARD.position = 3;
         FOURTH_CARD.position = 4;
     }
-     std::queue<Pair> GET_PAIR(ONE_STEP_COBINATION &one_step_combination) {//获得四张扑克牌中所有不含0的两张扑克牌的不重复的组合，因为对于4张扑克牌0牌只能被加和减法使用
+     std::queue<PAIR> GET_PAIR(ONE_STEP_COBINATION &one_step_combination) {//获得四张扑克牌中所有不含0的两张扑克牌的不重复的组合，因为对于4张扑克牌0牌只能被加和减法使用
         int last_card_num=-1;
-        std::queue<Pair> Q;
-        Pair last = EMPTY_Pair;
+        std::queue<PAIR> Q;
+        ERROR_BUG(); // 这一行错误处理取决于编译器，实测VS没问题，CL必须要处理，原因不知道
+        PAIR last = EMPTY_Pair;
         if (CARD_COUNT <= 1) return Q;
         for (int i = 0; i < CARD_COUNT; i++) {
             if (CARDS[i]->num == last_card_num){
@@ -185,7 +186,7 @@ public:
                 }
             last_card_num = CARDS[i]->num;
             for (int j = i + 1; j < CARD_COUNT; j++) {
-                Pair temp = Pair(*CARDS[i], *CARDS[j]);
+                PAIR temp = PAIR(*CARDS[i], *CARDS[j]);
                 if (temp == last) {
                     one_step_combination.add(CARDS[i]->position, CARDS[j]->position, CARDS[i]->num, CARDS[j]->num, combination_state::SECOND_CARD_REPEATED);
                     continue; // 避免重复
@@ -213,9 +214,15 @@ public:
     }
 
 private:
+    void ERROR_BUG() {// 错误处理函数
+        CARDS[0] = &FIRST_CARD;
+        CARDS[1] = &SECOND_CARD;
+        CARDS[2] = &THIRD_CARD;
+        CARDS[3] = &FOURTH_CARD;
+    }
     void SORT_CARDS() {
         int cnt = 0;
-        Card cardpool[4] = {FIRST_CARD, SECOND_CARD, THIRD_CARD, FOURTH_CARD};
+        CARD cardpool[4] = {FIRST_CARD, SECOND_CARD, THIRD_CARD, FOURTH_CARD};
         std::sort(cardpool, cardpool + 4,::COMPARE_DOWN_CARD); // 使用 lambda 表达式作为比较函数
         FIRST_CARD = cardpool[0];
         SECOND_CARD = cardpool[1];
@@ -240,7 +247,7 @@ public:
     int PAIR_FIRST_CARD_POSITION;// 第一张扑克牌的位置
     int PAIR_SECOND_CARD_POSITION;// 第二张扑克牌的位置
     int result;// 结果,如果结果为-1则代表是除法错误,如果结果为0则代表是空牌
-    ONE_STEP(const int &currentstep,const Poke &poke,const int &FOUR_FUNTION_NUM,const Pair &CHOSEN_PAIR,const Card &RESULT) {// 默认构造函数
+    ONE_STEP(const int &currentstep,const POKE &poke,const int &FOUR_FUNTION_NUM,const PAIR &CHOSEN_PAIR,const CARD &RESULT) {// 默认构造函数
         this->step = currentstep;
         for (int i = 0; i < 4; i++) {
             this->num[i] = poke.CARDS[i]->num;
@@ -251,7 +258,7 @@ public:
         this->PAIR_SECOND_CARD_POSITION = CHOSEN_PAIR.SECOND_CARD.position;
         this->result = RESULT.num;// 如果结果为-1则代表是除法错误,如果结果为0则代表是空牌
     }
-    ONE_STEP(const int &currentstep,const Poke &poke,const int &FOUR_FUNTION_NUM,const Pair &CHOSEN_PAIR,enum STATE=ERROR) {// 默认构造函数
+    ONE_STEP(const int &currentstep,const POKE &poke,const int &FOUR_FUNTION_NUM,const PAIR &CHOSEN_PAIR,enum STATE=ERROR) {// 默认构造函数
         this->step = currentstep;
         for (int i = 0; i < 4; i++) {
             this->num[i] = poke.CARDS[i]->num;
@@ -281,7 +288,7 @@ static ALL_STEP GLOBAL_ALL_STEP; // 全局变量
 class RESULT_STEP : public ALL_STEP {// 对结果的记录
 public:
     bool is_24point = false;
-    RESULT_STEP(Poke &poke,const ALL_STEP &G=::GLOBAL_ALL_STEP) {// 默认构造函数
+    RESULT_STEP(POKE &poke,const ALL_STEP &G=::GLOBAL_ALL_STEP) {// 默认构造函数
         is_24point=poke.LAST_24();
         this->is_24point = is_24point;
         this->current_step = G.current_step;
@@ -320,6 +327,7 @@ public:
         database_node_map.reserve(2000);
         step_map.reserve(1000);
         one_step_combination.reserve(1000);
+        result_map.reserve(1000);
     }
     void add_ONESTEP(const STEP_RECORD &step_record) {// 添加步骤节点
         step_map.push_back(step_record);
@@ -368,23 +376,23 @@ public:
 };
 
 // 24点游戏的深度优先搜索
-void DFS(int step,Poke &poke) {
+void DFS(int step,POKE &poke) {
     if (poke.CARD_COUNT <= 1) {
         RESULT_STEP step_result(poke);
         DATABASE_MANAGER::add_RESULT(step_result);
         return;
     }
-    std::queue<Pair> Q;
+    std::queue<PAIR> Q;
     ONE_STEP_COBINATION one_step_combination(poke.FIRST_CARD.num, poke.SECOND_CARD.num, poke.THIRD_CARD.num, poke.FOURTH_CARD.num);
     Q = poke.GET_PAIR(one_step_combination);
     DATABASE_MANAGER::add_COMBINATION(one_step_combination);
     while (!Q.empty()) {
-        Pair temp = Q.front();
+        PAIR temp = Q.front();
         Q.pop();
         for (int i = 0; i < 4; i++) {
-            Card result = (temp.*funcptr[i])();
+            CARD result = (temp.*funcptr[i])();
             if (result.num != DIVE_ERROR_CARD.num) {
-                Poke newpoke(temp, poke.FIRST_CARD, poke.SECOND_CARD, poke.THIRD_CARD, poke.FOURTH_CARD, result);
+                POKE newpoke(temp, poke.FIRST_CARD, poke.SECOND_CARD, poke.THIRD_CARD, poke.FOURTH_CARD, result);
                 ONE_STEP stepinfo(step, poke, i, temp,result);
                 ::GLOBAL_ALL_STEP.ALL_STEP_flash(stepinfo);
                 STEP_RECORD stepin_record;
@@ -400,11 +408,11 @@ void DFS(int step,Poke &poke) {
     }
 }
 int main() {
-    Card a(STATE::ORIGIN,8);
-    Card b(STATE::ORIGIN,3);
-    Card c(STATE::ORIGIN,2);
-    Card d(STATE::ORIGIN,1);
-    Poke poke(a, b, c, d);
+    CARD a(STATE::ORIGIN,8);
+    CARD b(STATE::ORIGIN,3);
+    CARD c(STATE::ORIGIN,2);
+    CARD d(STATE::ORIGIN,1);
+    POKE poke(a, b, c, d);
     DFS(1, poke);
     return 0;
 }
